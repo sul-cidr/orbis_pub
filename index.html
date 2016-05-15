@@ -1,0 +1,384 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>ORBIS: The Stanford Geospatial Network Model of the Roman World</title>
+  <link type="text/css" rel="stylesheet" href="chosen.min.css" />
+  <link type="text/css" rel="stylesheet" href="orbis.css" />
+  <link href='http://fonts.googleapis.com/css?family=Gentium+Basic:400,700' rel='stylesheet' type='text/css'>
+  <meta charset="utf-8" />
+</head>
+
+<body>
+  <div id="essayBox">
+    <div id="essayTitle" onclick="closeEssay()"></div>
+    <div id="essayContent">
+    <div id="tabNavigator">
+    <div class="navtab" data="home">Home</div>
+    <div class="navtab" data="intro">Introduction</div>
+    <div class="navtab" data="understand">Understanding</div>
+    <div class="navtab" data="build">Building</div>
+    <div class="navtab" data="geospatial">Geospatial</div>
+    <div class="navtab" data="tutorial">Using</div>
+    <div class="navtab" data="gallery">Gallery</div>
+    <div class="navtab" data="scholarship">Research</div>
+    <div class="navtab" data="media">Media</div>
+    <div class="navtab" data="credits">Credits</div>
+    <div class="navtab" data="news">News</div>
+    </div>
+    </div>
+    <div id="essayCloseButton" onclick="closeEssay()" >X</div>
+    <div style="width:100%;height:100%;" onclick="closeEssay()">
+    </div>
+  </div>
+  <div id="topbar"><div id="title">ORBIS<span style="color:white;font-size:16px;font-weight:400;margin-left:10px;">The Stanford Geospatial Network Model of the Roman World</span></div>
+    <div id="aboutButton" style="right: 232px;" onclick="createEssay('home')">About</div>
+    <div id="aboutButton" style="right: 140px;" onclick="tutorial(1);">Tutorial</div>
+    <div id="authors"><a target="_blank" href="http://www.stanford.edu/~scheidel/">Walter Scheidel</a> <a target="_blank" href="https://digitalhumanities.stanford.edu/users/elijah-meeks">Elijah Meeks</a></div></div>
+  <div id="restoreButton" style="display: none;position: fixed; top:40px; right:10px;"><button style="cursor:pointer;" onclick="restoreControlsMap();">Controls</button></div>
+
+  <div id="vizcontainer">
+  <div onclick="showHide('leftPanel')" id="closeLeft" class="rightarrow"></div>
+  <div onclick="showHide('rightPanel')" id="closeRight" class="leftarrow"></div>
+  <div onclick="showHide('bottomPanel')" id="closeBottom" class="downarrow">
+      <div class="footer">Published by <a target="_blank" href="http://library.stanford.edu">Stanford University Libraries</a> | <span style="font-size:9px;">Tiles &#169; <a target="_blank" href="http://awmc.unc.edu/wordpress/tiles/map-tile-information">AWMC</a>, CC BY-NC 3.0</span>
+</div>
+  </div>
+
+    <div id="mapControls">
+      <button class="zoomButton" id="zoomInButton" onclick="zoomManual('in');">+</button>
+      <button class="zoomButton" id="zoomOutButton" onclick="zoomManual('out');">-</button>
+    </div>
+    <div id="legendmodal" class="popup">
+      <span id="infoclosebutton" onclick="d3.select('#legendmodal').style('display','none');d3.select('#legendDisplayButton').style('display','block');" >X</span>
+      <span id="legendTitle">Legend</span>
+            <button onclick="createVoronoi();" data="voronoi" class="helpicon">Zones</button>
+      <svg id="legendSVG"></svg>
+    </div>
+    <div id="routemodal" class="modal"></div>
+    <div id="sitemodal" class="modal"></div>
+    <div id="clustermodalBack" class="modal">
+    <div id="clustermodal">
+      <div onclick="d3.select('#clustermodalBack').style('display','none');" style="position: absolute;height: 25px;width: 100%;background: #c72f2a;"></div>
+      <div id="essayCloseButton" style="top: 0;padding: 3px 3px 5px;right: 10;text-align: center;" onclick="d3.select('#clustermodalBack').style('display','none')" >X</div>
+      <div id="clustercontent"></div>
+    </div>
+    <div style="z-index:1;height:100%;width:100%;" onclick="d3.select('#clustermodalBack').style('display','none')"></div>
+    </div>
+    <div id="infopopup" class="popup">
+      <div id="infocontent">
+    </div>
+      </div>
+    <div id="tutorialpopup" class="tutorial">
+      <span id="infoclosebutton" onclick="d3.select('#tutorialpopup').style('display','none')" >X</span>
+      <div id="tutorialarrow" style="width:20px;height:20px;transform: rotate(45deg);-ms-transform: rotate(45deg);-webkit-transform: rotate(45deg);background:white;  border-left: solid 2px lightgray;border-top: solid 2px lightgray;position:absolute;left:20px;top:-12px;"></div>
+      <div id="tutorialcontent">
+        <p>Here's some tutorial content.</p>
+      </div>
+    </div>
+
+
+  </div>
+    <div id="rightControls" class="controlsDiv">
+    <div class="buttonContainer">
+    <div id="displayOptionsContainer" style="background:white;overflow:hidden;height:155px;padding:5px;width:109px;" class="buttonContainer">
+      <span style="color:gray;">DISPLAY</span>
+        <div onclick="mapOff();" style="width:100%;">
+      <div class="eyeButton" id="terrainOnButton">
+          <input id="dTOB" class="mode-checkbox" type="checkbox" name="display" checked></input>
+          <label for="dTOB" class="mode-picker-label"></label>
+        Terrain</div>
+        </div>
+        <div style="width:100%;" onclick="sitesOff();">
+      <div class="eyeButton" id="sitesOnButton">
+          <input id="dSOB" class="mode-checkbox" type="checkbox" name="display" checked></input>
+          <label for="dSOB" class="mode-picker-label"></label>
+Sites</div></div>
+        
+        <div style="width:100%;" onclick="temporaryLabels();">
+      <div class="eyeButton" id="labelsOnButton">
+          <input id="dLOB" class="mode-checkbox" type="checkbox" name="display"></input>
+          <label for="dLOB" class="mode-picker-label"></label>
+        Names</div></div>
+
+        <div style="width:100%;" onclick="networkOff(false);">
+      <div class="eyeButton" id="networkOnButton">
+                  <input id="dNOB" class="mode-checkbox" type="checkbox" name="display" checked></input>
+          <label for="dNOB" class="mode-picker-label"></label>
+Paths</div></div>
+        <div style="width:100%;" onclick="provincesOnOff();">
+      <div class="eyeButton" id="borderOnButton">
+                  <input id="dBOB" class="mode-checkbox" type="checkbox" name="display"></input>
+          <label for="dBOB" class="mode-picker-label"></label>
+Regions</div></div>
+        <div style="width:100%;" id="networkDisplayButton" onclick="changeStyleDots();">
+      <div class="eyeButton" id="dotSyleOnButton">
+          <input id="dNDB" class="mode-checkbox" type="checkbox" name="display"></input>
+          <label for="dNDB" class="mode-picker-label"></label>
+      All Sites</div></div>
+    </div>
+        <div class="buttonContainer" id="otherButtons">
+      <button id="startBrushingButton" onclick="startBrushing();" data="selectsites" class="helpicon">Select Sites</button>
+      <button id="stopBrushingButton" style="display:none;" onclick="stopBrushing();">Stop Selecting</button>
+      <button id="resetMapButton" onclick="resetMap();" onclick="">Reset Map</button>
+      <button onclick="clusterSitesUI()" data="cluster" class="helpicon">Cluster</button>
+      <button id="sankeyButton" style="display:none;" onclick="sankeyOff();">Flow Off</button>
+      <button data="browse" class="helpicon" onclick="_gaq.push(['_trackEvent', 'ui', 'history', 'history']);d3.selectAll('#resultsTableBack').style('display', 'block');d3.selectAll('.resultsRow').style('display', 'block');d3.selectAll('tr.resultsRow').style('display','table-row');">History</button>
+      <button data="exportsvg" class="helpicon" onclick="exportSVG();">Export SVG</button>
+      <a style="padding: 0px 12px;border-radius: 2px;color: #EEE8AA;background: #c72f2a;"id="svgDownload">Download SVG</a>
+      <button data="pathcolor" class="helpicon" onclick="changeStyleLines();">Path Coloring</button>
+      <button id="cartoOffMenu" onclick="cartogramOff();">Georectify</button>
+      <button id="voroOffMenu" onclick="clearVoronoi();">Zones off</button>
+      <button onclick="psStyle();" style="display: none;">Places & Spaces</button>
+      <div style="margin-top:20px;">
+      <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://orbis.stanford.edu" data-text="Mapping movement of goods and people in the Roman World" data-via="ORBIS_Stanford">Tweet</a>
+
+<div style="margin-top:20px;margin-left:30px;"><iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Forbis.stanford.edu&amp;width&amp;layout=box_count&amp;action=like&amp;show_faces=false&amp;share=true&amp;height=65" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:65px;" allowTransparency="true"></iframe>
+  </div>
+      </div>
+        </div>
+    </div>
+    </div>
+
+  <div class="controlsDiv" id="controlbar">
+    <div id="controlbarScroller";>
+    <a class="tab" id="routTab" onmouseover="contextualHelp('route')" onmouseout="d3.select('#infopopup').style('display','none')" onclick="switchControls('route');" style="background: rgb(65,64,66);position:absolute;left:0px;width:100px;">Route</a>
+    <a class="tab backtab" id="cartTab" onmouseover="contextualHelp('cartogram')" onmouseout="d3.select('#infopopup').style('display','none')" onclick="switchControls('cartogram');" style="background: rgb(52,51,53);position:absolute;left:110px;width:110px;border-right: solid gray 1px;border-left: solid gray 1px;">Network</a>
+    <a class="tab backtab" id="minTab" onmouseover="contextualHelp('minard')" onmouseout="d3.select('#infopopup').style('display','none')" onclick="switchControls('Minard');" style="background: rgb(39,38,40);position:absolute;left:232px;width:98px;">Flow</a>
+    <div class="buttonContainer" style="height:80px;">
+      <div id="sourceSelectParent" style="margin-bottom:10px;padding: 5px 10px; background: white;color:gray;">
+        <span style="width:25px;color:gray;" id="sourceSelectLabel">FROM</span>:
+      </div>
+        <div style="padding: 5px 10px; background: white;" id="targetSelectLabel"><span style="color:gray;width:25px;margin-right: 19px;">TO:</span> <select id="targetSelectButton" class="controlButton"></select>
+        </div>
+            <div id="directionDiv" style="display:none;margin-bottom:10px;padding: 5px 10px; background: white;height:23px;">
+      <div style="width:100%;color:gray;"><span style="margin-right:10px;">DIRECTION:</span>
+          <input style="height:20px;" id="from" class="radio-radio" type="radio" name="direction" value="0" checked></input>
+          <label style="color:gray;" for="from" class="mode-picker-label"></label><span style="margin-right:30px;">From</span>
+          <input id="to" class="radio-radio" type="radio" name="direction" value="1" ></input>
+          <label style="color:gray;" for="to" class="mode-picker-label"></label><span style="margin-right:10px;">To</span>
+</div>
+            </div>
+    </div>
+    <div class="buttonContainer" style="background: white;padding: 5px 0;">
+        <fieldset style="border:none;padding-top: 10px;margin-top:-8px;" id="departurePicker">
+      <div style="color:gray;padding-right:5px;margin-top:1px;display:inline-block;margin-top: 3px;" >DEPARTING: </div> <input onclick="showHide('travelMonth');" type="radio" name="departure" value="1" id="monthD">
+      <label for="monthD" class="departure-picker-label">Month</label>
+      <input onclick="showHide('travelSeason');" type="radio" name="departure" value="2" id="seasonD" checked>
+      <label for="seasonD" class="departure-picker-label">Season</label>
+            </fieldset>
+      <fieldset style="padding: 0 10px 15px 15px;border: none;" id="monthPicker">
+      <input type="radio" name="month" class="season" value="1" id="winter">
+      <label style="width: auto;" for="winter" class="month-picker-label season-picker-label season"><img class="season" style="height:36px;" src="winter.png" /></label>
+      <input type="radio" name="month" class="season" value="4" id="spring">
+      <label style="width: auto;" for="spring" class="month-picker-label season-picker-label season"><img class="season" style="height:36px;" src="spring.png" /></label>
+      <input type="radio" name="month" class="season" value="7" id="summer" checked>
+      <label style="width: auto;" for="summer" class="month-picker-label season-picker-label season"><img class="season" style="height:36px;" src="summer.png" /></label>
+      <input type="radio" name="month" class="season" value="9" id="fall">
+      <label style="width: auto;" for="fall" class="month-picker-label season-picker-label season"><img class="season" style="height:36px;" src="fall.png" /></label>
+
+      <input style="display:none;" type="radio" name="month" value="1" id="jan">
+      <label style="display:none;" for="jan" class="month-picker-label">Jan</label>
+      <input style="display:none;" type="radio" name="month" value="2" id="feb">
+      <label style="display:none;" for="feb" class="month-picker-label">Feb</label>
+      <input style="display:none;" type="radio" name="month" value="3" id="mar">
+      <label style="display:none;" for="mar" class="month-picker-label">Mar</label>
+      <input style="display:none;" type="radio" name="month" value="4" id="apr">
+      <label style="display:none;" for="apr" class="month-picker-label">Apr</label>
+      <input style="display:none;" type="radio" name="month" value="5" id="may">
+      <label style="display:none;" for="may" class="month-picker-label">May</label>
+      <input style="display:none;" type="radio" name="month" value="6" id="jun">
+      <label style="display:none;" for="jun" class="month-picker-label">Jun</label>
+      <input style="display:none;" type="radio" name="month" value="7" id="jul">
+      <label style="display:none;" for="jul" class="month-picker-label">Jul</label>
+      <input style="display:none;" type="radio" name="month" value="8" id="aug">
+      <label style="display:none;" for="aug" class="month-picker-label">Aug</label>
+      <input style="display:none;" type="radio" name="month" value="9" id="sep">
+      <label style="display:none;" for="sep" class="month-picker-label">Sep</label>
+      <input style="display:none;" type="radio" name="month" value="10" id="oct">
+      <label style="display:none;" for="oct" class="month-picker-label">Oct</label>
+      <input style="display:none;" type="radio" name="month" value="11" id="nov">
+      <label style="display:none;" for="nov" class="month-picker-label">Nov</label>
+      <input style="display:none;" type="radio" name="month" value="12" id="dec">
+      <label style="display:none;" for="dec" class="month-picker-label">Dec</label>
+    </fieldset>
+    </div>
+
+    <div class="buttonContainer" style="background: white;">
+            
+      <fieldset style="border: none;" id="priorityForm" class="priorityForm">
+        <div style="color:gray;padding-right:5px;display: inline-block;margin-top: 3px;" >PRIORITY: </div>
+        <input onclick="changePriority('f')" type="radio" value="0" name="priority" id="fp" checked>
+        <label for="fp" class="priority-picker-label">Fastest</label>
+        <input onclick="changePriority('c')" type="radio" value="1" name="priority" id="cp">
+        <label for="cp" class="priority-picker-label">Cheapest</label>
+        <input  onclick="changePriority('f')" type="radio" value="2" name="priority" id="sp">
+        <label for="sp" class="priority-picker-label">Shortest</label>
+      </fieldset>
+    </div>
+
+    <div class="buttonContainer" id="networkModeContainer" style="overflow:hidden;background:white;padding-bottom: 9px;">
+            <div class="fieldTitle" style="text-transform: uppercase;color:gray;">Network Modes</div>
+      <fieldset style="margin-top:-8px;margin-bottom: 8px;padding-bottom: 13px;border:none;border-bottom: 1px solid #414042;">
+      <form id="modeForm" onclick="updateBGRoutes();">
+        <div style="width:130px;float:left;">
+        <input type="checkbox" class="mode-checkbox" value="road" name="mode" id="rm" checked>
+          <label for="rm" class="mode-picker-label"></label>Road</div>
+        <div style="width:130px;float:left;">
+        <input id="coastModeCheck" class="mode-checkbox" type="checkbox" value="coastal" name="mode" checked>
+          <label for="coastModeCheck" class="mode-picker-label"></label>Coastal Sea</div>
+        <div style="width:130px;float:left;">
+        <input id="riverModeCheck" class="mode-checkbox" type="checkbox" value="upstream,downstream" name="mode" checked>
+          <label for="riverModeCheck" class="mode-picker-label"></label>River</div>
+        <div style="width:130px;float:left;">
+        <input id="overseasModeCheck" class="mode-checkbox" type="checkbox" value="overseas" name="mode" checked>
+          <label for="overseasModeCheck" class="mode-picker-label"></label>Open Sea</div>
+        <div style="width:240px;float:left;" data="highres" class="helpicon">
+        <input type="checkbox" class="mode-checkbox" value="hires" name="mode" id="hrm">
+          <label for="hrm" class="mode-picker-label"></label>High Resolution
+        </div>
+      </form>
+      </fieldset>
+            <div id="modeOptions" style="width:15%;float:left;">
+              <div style="color:white;">X </div>
+              <div style="margin-top: 9px;text-align: right;font-size: 14px;text-transform: uppercase;">Road </div>
+              <div style="margin-top: 13px;text-align: right;font-size: 14px;text-transform: uppercase;">River </div>
+              <div style="margin-top: 14px;text-align: right;font-size: 14px;text-transform: uppercase;">Sea </div>
+            </div>
+            <div id="modeOptions" style="width:55%;float:left;">
+              <div style="width:100%;color:gray;margin-left:10px;">MODE</div>
+              <div class="modeSelect"><select id="vehicleSelectButton" style="width:170px;" class="controlButton" onclick="colorBy('e')"></select></div>
+              <div class="modeSelect"><select id="riverSelector" onchange="riverSwitch(this);"><option value="civ">Civilian</option><option value="mil">Military</option></select></div>
+              <div class="modeSelect"><select id="seaSelector" onchange="seaSwitch(this);"><option value="fast">Fast</option><option value="slow">Slow</input><option value="day">Daylight</option></select></div>
+            </div>
+      <div style="width:30%;float:left;" data="transfer" class="helpicon">
+              <div style="width:100%;color:gray;">TRANSFER COST</div>
+      <div style="width:100%;margin-top:16px;"><input type="text" style="text-align: center;height:23px;border-radius: 2px;width:30px;border: 1px #231f20 solid;" id="riverTransferCost" class="controlButton" placeholder="0"></input></div>
+      <div style="width:100%;margin-top:6px;"><input type="text" style="text-align: center;height:23px;border-radius: 2px;width:30px;border: 1px #231f20 solid;" id="seaTransferCost" class="controlButton" placeholder="0"></input></div>
+      </div>
+    </div>
+</div>
+    <div class="buttonContainer">
+      <div class="calculateDisable"><div id="calculateDisableText">Calculating</div></div>
+      <button class="controlButton calculateButton" id="routeCalculateButton" onclick="calculateRoute()">Calculate Route</button>
+      <button class="controlButton calculateButton" id="cartoCalculateButton" style="display:none;" onclick="calculateCarto()">Calculate Network</button>
+      <button class="controlButton calculateButton" id="sankeyCalculateButton" style="display:none;" onclick="calculateSankey()">Calculate Flow</button>
+    </div>
+  </div>
+      <div id="resultsTableBack" class="modal">
+    <div id="resultsTable">
+      <div id="essayCloseButton" style="top: 0;padding: 3px 3px 5px;right: 10px;text-align: center;" onclick="d3.select('#resultsTableBack').style('display','none')" >X</div>
+      <div id="resultsTableContent">
+      <div style="margin: 10px 0;">
+        <button class="legendButton" onclick="d3.selectAll('.resultsRow').style('display', 'none');d3.selectAll('.routeRow').style('display','block');d3.selectAll('tr.routeRow').style('display','table-row');">Route</button>
+        <button class="legendButton" onclick="d3.selectAll('.resultsRow').style('display', 'none');d3.selectAll('.networkRow').style('display','block');d3.selectAll('tr.networkRow').style('display','table-row');">Network</button>
+        <button class="legendButton" onclick="d3.selectAll('.resultsRow').style('display', 'none');d3.selectAll('.flowRow').style('display','block');d3.selectAll('tr.flowRow').style('display','table-row');">Flow</button>
+        <button class="legendButton" onclick="d3.selectAll('.resultsRow').style('display', 'block');d3.selectAll('tr.resultsRow').style('display','table-row');">All</button>
+        <span style="margin: 0 10px;font-weight: 900;">|</span>
+        <button class="legendButton" onclick="d3.selectAll('.resultsContainer').style('display', 'none');d3.selectAll('#recentGrid').style('display', 'block');">Grid View</button>
+        <button class="legendButton" onclick="d3.selectAll('.resultsContainer').style('display', 'none');d3.selectAll('#recentList').style('display', 'block');">List View</button>
+        <button class="legendButton" onclick="d3.selectAll('.resultsContainer').style('display', 'none');d3.selectAll('#recentTable').style('display', 'block');">Table View</button>
+      </div>
+      <div id="recentList" class="resultsContainer" style="overflow: auto;height:520px;border-top:1px lightgray solid;">
+        <span class="emptyHistory">There are no results yet because you haven't run any routes or network diagrams.</span>
+      </div>
+      <div id="recentGrid" class="resultsContainer" style="display:none;overflow: auto;height:520px;border-top:1px lightgray solid;">
+        <span class="emptyHistory">There are no results yet because you haven't run any routes or network diagrams.</span>
+      </div>
+            <div id="recentTable" class="resultsContainer" style="display:none;overflow: auto;height:520px;border-top:1px lightgray solid;">
+        <span class="emptyHistory">There are no results yet because you haven't run any routes or network diagrams.</span>
+        <table style="width:540px;">
+          <caption>Results</caption>
+          <thead>
+            <tr>
+              <th>Start</th>
+              <th>End</th>
+              <th>Priority</th>
+              <th>Month</th>
+              <th>Vehicle</th>
+              <th>Thumb</th>
+            </tr>
+            <tbody id="recTableActual">
+              
+            </tbody>
+          </thead>
+        </table>
+      </div>
+            
+      </div>
+    </div>
+    <div style="z-index:1;height:100%;width:100%;" onclick="d3.select('#resultsTableBack').style('display','none')"></div>
+    </div>
+      <div id="siteSelectionModal">
+      <div id="siteSelectionModalContent">
+      </div>
+      <div id="otherButtons">
+            <button class="otherButtons" onclick="massSiteChange('all')">All Sites</button>
+      <button class="otherButtons" onclick="massSiteChange('intersect')">Limit to these Sites</button>
+      <button class="otherButtons" onclick="massSiteChange('on')">Add these sites</button>
+      <button class="otherButtons" onclick="massSiteChange('off')">Exclude these sites</button>
+      <button class="otherButtons" onclick="stopBrushing();">Stop Selecting</button>
+      </div>
+      </div>
+  <div id="siteDetailsModal" onclick="d3.select('#siteDetailsModal').style('display','none');">
+  <div id="siteDetails">
+    <div id="siteTitle">Roma</div>
+    <div id="siteInfo">Information about the city</div>
+    <div class="siteSubTitle">Routes</div>
+    <div id="siteRoutes">
+      <div class="siteRouteInfo">
+        From here:
+        <div id="fromRoutes" class="srContent"></div>
+      </div>
+      <div class="siteRouteInfo">
+        To here:
+        <div id="toRoutes" class="srContent"></div>
+      </div>
+      <div class="siteRouteInfo">
+        Through here:
+        <div id="throughRoutes" class="srContent"></div>
+      </div>
+    </div>
+    <div class="siteSubTitle">Networks</div>
+    <div id="siteNetworks">
+        <div class="srContent" style="height:100%;"></div>      
+    </div>
+  </div>
+  </div>
+  <div style="display:none;" id="badBrowser">
+    <div id="badBrowserContent">
+      <p>ORBIS is designed for modern browsers and uses technology that works best in Chrome or Safari.</p>
+      <p>If you want to try ORBIS in your unsupported browser, <span style="font-weight: 900;color:darkred;text-decoration: underline;cursor:pointer;" onclick="startUp();"> click here.</span></p>
+      <p>The <a href="http://orbis.stanford.edu/orbis2012/">older version of ORBIS</a> will work in your browser. Click <a href="http://orbis.stanford.edu/orbis2012/">here</a> to go to that version.</p>
+      <img style="height:50%;" src="images/atlas275w.png"></img>
+    </div>
+  </div>
+  <div id="timelineViz">
+    <a id="tlbPerspective" class="tab routeComps" style="left:585px;" >Perspective</a>
+    <a id="tlbDuration" class="tab backtab routeComps" style="left:676px;" >Duration</a>
+    <a id="tlbDistance" class="tab backtab routeComps" style="left:748px;" >Distance</a>
+    <a id="tlbExpensed" class="tab backtab routeComps" style="left:818px;" >Donkey</a>
+    <a id="tlbExpensew" class="tab backtab routeComps" style="left:880px;" >Wagon</a>
+    <a id="tlbExpensec" class="tab backtab routeComps" style="left:937px;" >Carriage</a>
+  <div id="routeResults"></div>
+<svg id="timelineSVG" width="100%" height="100%" style="position:relative;left:550px;top:-10px;">
+  <g id="tlXAxis" class="tlAxis routeComps" transform="translate(0,100)"></g>
+  <g id="tlYAxis" class="tlAxis routeComps" transform="translate(60,0)"></g>
+  <text id="tlYLabel" class="routeComps" transform="rotate(-90)" x="-80" y="50">Longitude</text>
+  <text id="tlXLabel" class="routeComps" x="70" y="115">Latitude</text>
+</svg>
+  </div>
+  <footer>
+    <script src="o_settings.js" type="text/javascript">
+</script> <script src="d3.v3.min.js" type="text/javascript">
+</script> <script src="d3.geo.tile.v0.min.js" type="text/javascript">
+</script> <script src="topojson.js" type="text/javascript">
+</script> <script src="colorbrewer.js" type="text/javascript">
+</script> <script src="legend.js" type="text/javascript">
+</script> <script src="orbis.js" type="text/javascript">
+</script> <script src="community.js" type="text/javascript">
+</script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+  <script src="chosen.jquery.min.js" type="text/javascript"></script>
+  <script src="prism.js" type="text/javascript" charset="utf-8"></script>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <link type="text/css" rel="stylesheet" href="style.css"/>
+    <script type="text/javascript" src="../../lib/d3/d3.js"></script>
+<script type="text/javascript" src="../../lib/d3/d3.layout.js"></script>
+<script type="text/javascript" src="../../lib/d3/d3.geo.js"></script>
+    
+
+<style type="text/css">
+
+svg {
+  width: 1280px;
+  height: 800px;
+  pointer-events: all;
+}
+
+circle {
+  fill: #dbe4f0;
+}
+
+path {
+  fill: #a2906e;
+  stroke: #fff;
+}
+
+.logo {
+  fill: none;
+  stroke:#dbe4f0;
+}
+
+    </style>
+
+  </head>
+  <body>
+<div style="height:1px; margin-bottom:0px">
+<svg viewBox="0 0 1000 100" version="1.1">
+    <defs>
+        <path id="s2" d="M 10,90 Q 100,15 200,70 Q 340,140 400,30" class="logo"/>
+    </defs>
+    <g fill="navy">
+        <text font-size="12">
+            <textPath xlink:href="#s2">
+                ORBIS|via - ORBIS|via - ORBIS|via - ORBIS|via - ORBIS|via - ORBIS|via - ORBIS|via - ORBIS|via - ORBIS|via - ORBIS|via - ORBIS|via - ORBIS|via
+            </textPath>
+        </text>
+        <use x="0" y="0" xlink:href="#s2" stroke="black" fill="none"/>
+    </g>
+</svg>
+</div>
+  
+    <div id="body">
+    </div>
+
+    <script type="text/javascript">
+
+routeLegend = {"road": "brown", "upstream": "darkBlue", "downstream": "lightBlue", "coastal": "lightgreen", "overseas": "green", "ferry": "purple"};
+
+currentDuration = 0;
+
+var feature;
+var routeObjects;
+var sites;
+
+projection = d3.geo.azimuthal()
+    .scale(15000)
+    .origin([12.5,41.9])
+    .mode("orthographic")
+    .translate([640, 400]);
+
+circle = d3.geo.greatCircle()
+    .origin(projection.origin());
+
+/*
+scale = {
+  orthographic: 380,
+  stereographic: 380,
+  gnomonic: 380,
+  equidistant: 380 / Math.PI * 2,
+  equalarea: 380 / Math.SQRT2
+};
+*/
+
+path = d3.geo.path()
+    .projection(projection);
+
+svg = d3.select("#body").append("svg:svg")
+    .attr("width", 1280)
+    .attr("height", 800)
+//    .on("mousedown", mousedown)
+    ;
+
+map = svg.append("svg:g").attr("class", "map");
+
+d3.json("romeland.json", function(collection) {
+	  feature = map.selectAll("path.countries")
+	      .data(collection.features)
+	    .enter().append("svg:path")
+	      .attr("d", clip)
+	      .attr("class", "countries")
+	      	      ;
+
+/*	  feature.append("svg:title")
+	      .text(function(d) { return d.properties.name; });
+	      */
+		  d3.json("baseroads.json", function(collection) {
+			  baseRoads = map.selectAll("path.routes")
+			      .data(collection.features)
+			    .enter().append("svg:path")
+			      .style("fill", "none")
+			      .style("stroke", "burlywood")
+			      .attr("d", clip)
+			      .attr("class", "baseroads")
+			      .style("stroke-width", 2)
+			      .style("opacity", 0)
+				      .transition()
+				      .duration(1000)
+				      .style("opacity", 1)
+			      	      ;
+	      
+
+	  d3.json("routesQuery.php?s=50327&m=5", function(collection) {
+		  routeObjects = map.selectAll("path.routes")
+		      .data(collection.features)
+		    .enter().append("svg:path")
+		      .style("fill", "none")
+		      .style("stroke", function(d) {return routeLegend[d.properties.type]})
+		      .attr("d", clip)
+		      .attr("class", "routes")
+		      .style("opacity", 0)
+			      .style("stroke-width", 4)
+			      .style("stroke-linejoin", "round")
+			      .transition()
+			      .delay(1000)
+			      .duration(1000)
+			      .style("opacity", 1)
+		      	      ;
+
+		  centerLabel = map.selectAll("text.centerLabel")
+		  .data([{"type": "Feature", "geometry": {"type":"Point","coordinates":[12.5,41.9]}, "properties": {"nodeid":50327,"rank":100,"label": "Roma"}}])
+		  .enter()
+		  .append("svg:text")
+		  .attr("class", "centerLabel")
+		  .attr("transform", function(d) {return "translate(" + projection(d.geometry.coordinates) + ")";})
+		  .text(function (d) {return d.properties.label})
+		  
+  	      
+		  d3.json("sitesQuery.php?s=50327&m=5", function(json) {
+			  sites = map.selectAll("g.sites")
+			      .data(json.features)
+			      .enter()
+			      .append("svg:g")
+			      .attr("class", "sites")
+			      .attr("id", function(d) {return "site" + d.properties.nodeid})
+			      .attr("transform", function(d) {return "translate(" + projection(d.geometry.coordinates) + ")";})
+			      .on("click", siteClick)
+			      ;
+		      sites.append("svg:circle")			      
+			      .attr('r',5)
+//			      .attr('cx', function(d) {return projection(d.geometry.coordinates)[0]})
+//			      .attr('cy', function(d) {return projection(d.geometry.coordinates)[1]})
+			      .attr("class", "sites")
+			      .style("opacity", 0)
+			      .transition()
+			      .delay(1000)
+			      .duration(1000)
+			      .style("opacity", 1)
+			      ;
+		      sites.append("svg:text")
+		      .attr("class", "nodetext")
+		      .text(function(d) { return d.properties.label})
+		          .style("opacity", 0)
+			      .transition()
+			      .delay(1500)
+			      .duration(1000)
+			      .style("opacity", 1)		      
+		      ;
+		      //createVignette();
+		  })
+	  })
+		});
+	});
+
+
+
+d3.select(window)
+    .on("mousemove", mousemove)
+    .on("mouseup", mouseup)
+    ;
+
+d3.select("select").on("change", function() {
+  projection.mode(this.value).scale(scale[this.value]);
+  refresh(1);
+});
+
+var m0,
+    o0;
+
+function mousedown() {
+  m0 = [d3.event.pageX, d3.event.pageY];
+  o0 = projection.origin();
+  d3.event.preventDefault();
+}
+
+function mousemove() {
+  if (m0) {
+    var m1 = [d3.event.pageX, d3.event.pageY];
+        o1 = [o0[0] + (m0[0] - m1[0]) / 8, o0[1] + (m1[1] - m0[1]) / 8];
+    projection.origin(o1);
+    circle.origin(o1)
+    refresh();
+  }
+}
+
+function mouseup() {
+  if (m0) {
+    mousemove();
+    m0 = null;
+  }
+}
+
+
+function refresh(duration) {
+  (duration ? feature.transition().duration(duration) : feature).attr("d", clip);
+  (duration ? baseRoads.transition().duration(duration) : baseRoads).attr("d", clip);
+  (duration ? routeObjects.transition().duration(duration) : routeObjects).attr("d", clip);
+  (duration ? sites.transition().duration(duration).attr("transform", function(d) {return "translate(" + checkProjection(d.geometry.coordinates) + ")";}) : sites.transition().duration(duration).attr("transform", function(d) {return "translate(" + projection(o1) + ")";}))
+  
+	  /*
+	  feature.attr("d", clip);
+	  baseRoads.attr("d", clip);
+	  routeObjects.attr("d", clip);
+	  sites.attr("transform", function(d) {return "translate(" + checkProjection(d.geometry.coordinates) + ")";});
+	  */
+			  
+}
+
+function clip(d) {
+  return path(circle.clip(d));
+}
+
+function checkProjection(inArray){
+	inArray = projection(inArray);
+	inArray[0] = Math.min(inArray[0],1240);
+	inArray[1] = Math.min(inArray[1],760);
+	inArray[0] = Math.max(inArray[0],40);
+	inArray[1] = Math.max(inArray[1],40);
+	return inArray;
+}
+
+function createVignette(d,i) {
+	d3.select(document.getElementById("vignette")).remove();
+	
+		  vignette = svg.append("svg:g")
+		      .attr("id", "vignette")
+		      ;
+
+		  vignette
+	      .append("svg:rect")
+	      .attr("height", 300)
+	      .attr("width", 300)
+		      .attr("x", 970)
+		      .attr("y", 10)
+	      .style("fill", "gray")
+		  .style("stroke", "black")
+	      ;
+
+		  vignette
+			.append("svg:image")
+		    .attr("xlink:href", "vignettes/" + d.properties.rank + ".png")
+		    .attr("x", 980)
+		    .attr("y", 20)
+		    .attr("width", 280)
+		    .attr("height", 280);
+
+		  vignette
+			.append("svg:text")
+		    .attr("x", 1050)
+		    .attr("y", 270)
+		    .text(d.properties.label);
+
+		  vignette
+			  .append("svg:rect")
+			  .attr("height", 20)
+			  .attr("width", 20)
+			  .attr("x", 1240)
+			  .attr("y", 20)
+			  .attr("rx", 10)
+			  .attr("ry", 10)
+			  .attr("fill", "orange")
+			  .attr("stroke", "black")
+			  .style("opacity", 1)
+		    .on("click", function() {	d3.select(document.getElementById("vignette")).remove(); });
+
+		  vignette
+			.append("svg:text")
+		    .attr("x", 50)
+		    .attr("y", 50)
+		    .text("Traveling for " + currentDuration + " days");
+		    
+				    
+}
+
+function siteClick(d, i) {
+
+	removeNodeMenu();
+	x = 0;
+	console.log(d.properties.modes[x])
+	
+        for ( x = 0; x < d.properties.modes.length; x++ ) {      	
+            
+    	d3.select(document.getElementById("site" + d.properties.nodeid))
+    	  .append("svg:rect")
+    	  .attr("class", "nodeMenu")
+    	  .attr("height", 20)
+    	  .attr("width", 20)
+    	  .attr("x", 5)
+    	  .attr("y", (x * 25) - (d.properties.modes.length * 12.5))
+    	  .attr("rx", 2)
+    	  .attr("fill", routeLegend[d.properties.modes[x]])
+    	  .attr("stroke", "black")
+    	  .style("opacity", 1)
+          .attr("id", d.properties.modes[x])
+        .on("click", changeCenter)
+        ;
+
+    	d3.select(document.getElementById("site" + d.properties.nodeid))
+  	  .append("svg:text")
+  	  .attr("class", "nodeMenu")
+  	  .attr("x", 7)
+  	  .attr("y", ((x * 25) - (d.properties.modes.length * 12.5)) + 15)
+  	  //.text("9")
+  	  .text("" + Math.floor(d.properties.routeTime[x]))
+    	  .attr("stroke", "white")
+        .attr("id", d.properties.modes[x])
+        .on("click", changeCenter)
+            ;
+
+}
+}
+
+function removeNodeMenu(){
+	d3.selectAll("rect.nodeMenu")
+	.remove()
+	;
+	d3.selectAll("text.nodeMenu")
+	.remove()
+	;
+	
+}
+
+function changeCenter(d,i) {
+	projection.origin(d.geometry.coordinates);
+	d3.selectAll("g.sites").remove();
+	d3.selectAll("path.routes").remove();
+
+//	currentDuration += time;
+	
+	  centerLabel = map.selectAll("text.centerLabel")
+  	  .text(d.properties.label)
+      .style("opacity", 0)
+			      .transition()
+			      .delay(1000)
+			      .duration(1000)
+			      .style("opacity", 1)
+			      ;
+	
+	  d3.json("routesQuery.php?s="+d.properties.nodeid+"&m=5", function(collection) {
+		  routeObjects = map.selectAll("path.routes")
+		      .data(collection.features)
+		    .enter().append("svg:path")
+		      .style("fill", "none")
+		      .style("stroke", function(d) {return routeLegend[d.properties.type]})
+		      .attr("d", clip)
+		      .attr("class", "routes")
+		      .style("opacity", 0)
+			      .style("stroke-width", 4)
+			      .style("stroke-linejoin", "round")
+			      .transition()
+			      .delay(1000)
+			      .duration(1000)
+			      .style("opacity", 1)
+		      	      ;
+  	      
+		  d3.json("sitesQuery.php?s="+d.properties.nodeid+"&m=5", function(json) {
+			  sites = map.selectAll("g.sites")
+			      .data(json.features)
+			      .enter()
+			      .append("svg:g")
+			      .attr("class", "sites")
+			      .attr("id", function(d) {return "site" + d.properties.nodeid})
+			      .attr("transform", function(d) {return "translate(" + projection(d.geometry.coordinates) + ")";})
+			      .on("click", siteClick)
+			      ;
+		      sites.append("svg:circle")			      
+			      .attr('r',5)
+			      .attr("class", "sites")
+			      .style("opacity", 0)
+			      .transition()
+			      .delay(1000)
+			      .duration(1000)
+			      .style("opacity", 1)
+			      ;
+		      sites.append("svg:text")
+		      .attr("class", "nodetext")
+		      .text(function(d) { return d.properties.label})
+   		          .style("opacity", 0)
+			      .transition()
+			      .delay(1500)
+			      .duration(1000)
+			      .style("opacity", 1)		      
+		      
+		      ;
+	          createVignette(d,i);
+
+	      
+		    refresh(1);
+	  })
+	  })
+	
+
+	}
+
+    </script>
+  </body>
+</html>

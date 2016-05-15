@@ -1,0 +1,63 @@
+<div class="articlebody">
+
+<h3>ORBIS and the Sea: a model for maritime transportation under the Roman Empire</h3>
+<p class="italic">Scott Arcenas (Stanford University)</p>
+
+<p>On its most basic level, ORBIS seeks to ascertain the time necessary for travel between a variety of nodes within the Roman Empire.  With respect to land routes, this calculation is relatively easy, as it consists of the simple equation T=D*V, where T represents time, D represents distance, and V represents average velocity of travel.  With respect to maritime navigation, however, the situation is rather more complex; for Rome's reliance upon sailing vessels places V at the mercy of an independent variable—namely the velocity of the wind (Vwind)—and thus demands that it be analyzed as a function—namely f(Vwind).</p>
+
+<p>For maritime voyages, therefore, T=D*f(Vwind), but the new equation proves overly complex for computer modeling.  The project thus demands that we simplify T=D*f(Vwind) by formulating a general solution to the subordinate equation V=f(Vwind).  The process by which ORBIS does so comprises three complementary procedures: I represents Vwind by means of traditional wind roses; II models f(Vwind) by means of compatible 'speed roses;' and III integrates these wind and speed roses to produce a general solution for V=f(Vwind). </p>
+
+<h3>I: Modeling Vwind</h3>
+<p>As classical wind patterns appear to resemble those of the modern era (Murray 1987), contemporary meteorological data have been generally accepted as an accurate foundation upon which to base analyses of ancient maritime practices (e.g. Casson 1995, Arnaud 2005).  ORBIS accepts the communis opinio in this respect and, accordingly, grounds its model of Vwind primarily on a set of data compiled by the National Imagery and Mapping Agency of the United States Department of Defense (National Imagery and Mapping Agency 2002).</p>
+  
+<p>In accordance with the project's overall preference for "averages over particular outcomes [and] large-scale connectivity over local conditions" (Understanding ORBIS), individual data points have been aggregated into square sections five degrees on either side and then averaged for each month.[<a id="sa_cite1" href="#sa_fn1" >1</a>]   It is hoped that this intermediate level of aggregation will account, on the one hand, for significant regional and seasonal variations in wind patterns while simultaneously avoiding, on the other, a false impression of granular precision.</p>
+
+<p>In keeping with general standards of practice in the nautical world, ORBIS models wind direction by means of simplified roses, which account for the eight cardinal and inter-cardinal directions.  The conventional Beaufort scale, however, was deemed overly-precise for the demands of the project and has therefore been replaced by a relatively coarse model admitting only four wind speeds: dead calm, light airs, moderate breeze, and heavy air.[<a id="sa_cite2" href="#sa_fn2" >2</a>] </p> 
+
+<p>In combination, these simplifying assumptions allow the plethora of original data points to be represented by means of twelve maps, one for each month (e.g. Figure 4, below), each of which contains a variety of wind roses resembling the following example:</p>
+<div class="inlinepic"><a href="#" onclick="picWin('apply_arcenas_fig01.png', 'cap_sa01')"><img src="figures/apply_arcenas_fig01_600w.png"/></a>
+<p><span class="caption" id="cap_sa01">Figure 1.</span></p></div>
+
+<h3>II: Modeling f(Vwind)</h3>
+<p>As briefly noted above, the velocity of a sailing ship can be represented as a function of Vwind. Unfortunately, however, the historical record provides only a rough indication of the way in which particular wind conditions affected Roman vessels.  In the absence of detailed documentation, therefore, ORBIS employs a combination of classical testimonia (i.e. accounts of actual voyages undertaken by Roman sailors) and comparative data (derived from modern reconstructions of pre-modern comparanda) in order to estimate the performance of two idealized Roman vessels[<a id="sa_cite3" href="#sa_fn3" >3</a>] on each point of sail, as demonstrated in the examples below:</p>
+ <div class="inlinepic"><a href="#" onclick="picWin('apply_arcenas_fig02.png', 'cap_sa02')"><img src="figures/apply_arcenas_fig02_600w.png"/></a><p><span class="caption"  id="cap_sa02">Figure 2.</span></p></div>
+
+<h4>A. Velocity made good:</h4>
+<p>As indicated by the figure above, sailing vessels cannot travel directly upwind.  In order to reach destinations within the 'no-go zone,' therefore, they must beat their way upwind through a series of tacks or jibes.  For ships performing such maneuvers, net progress toward the intended destination can be expressed by the following equation for velocity made good: Vmg =Vship*COS(x), where Vship represents the velocity of the ship along its highest possible heading, and x represents the angle between this actual and the desired course.  By determining the effective rate at which the two exempla could progress along headings of both 0 and 45 degrees off of the wind, the formula fills in the blanks left by Figure 3 and thus yields the following set of speed roses:</p>
+ 
+<div class="inlinepic"><a href="#" onclick="picWin('apply_arcenas_fig03.png', 'cap_sa03')"><img src="figures/apply_arcenas_fig03_600w.png"/></a><p><span class="caption"  id="cap_sa03">Figure 3.</span></p></div>
+ 
+<h3>III: Solving V=f(Vwind)</h3>
+<p>With both wind and speed roses having been produced, it remains only to demonstrate the way in which they interact with one another.  Rather than attempt a narrative explanation, I here include a sample calculation for the faster of our two idealized vessels departing from Alexandria and heading due North for Cyprus during the month of June:</p>
+
+<h4>A. Sample calculation:</h4>
+<p>1. Identify the wind rose governing the relevant area.</p>
+ <div class="inlinepic"><a href="#" onclick="picWin('apply_arcenas_fig04_1200w.png', 'cap_sa04')"><img src="figures/apply_arcenas_fig04_600w.png"/></a><p><span class="caption" id="cap_sa04">Figure 4.</span></p></div>
+
+<p>2. Orient the wind rose with respect to the speed roses.</p>
+<div class="inlinepic"><a href="#" onclick="picWin('apply_arcenas_fig05.png', 'cap_sa05')"><img src="figures/apply_arcenas_fig05_600w.png"/></a><p><span class="caption"  id="cap_sa05">Figure 5.</span></p></div>
+ 
+<p>3. Determine the distance traveled during an average hour.</p>
+ <div class="inlinepic"><a href="#" onclick="picWin('apply_arcenas_fig06.png', 'cap_sa06')"><img src="figures/apply_arcenas_fig06_600w.png"/></a><p><span class="caption"  id="cap_sa06">Figure 6.</span></p></div>
+<ol type="a">
+<li>Identify the relevant values for a heading of 360/0 degrees: 3 indicates heavy air; 15 indicates that it blew for 15% of an average hour.</li>
+<li>Select, from the 'heavy air' speed rose, the value for 360 degrees: -0.7 knots (nautical miles/hour).</li>
+<li>Convert 15% to a decimal: .15 hours.</li>
+<li>Multiply velocity by time: V*T = -0.7 knots * .15 hours = -.105 nautical miles.</li>
+<li>Repeat for a heading of 45 degrees: 2 indicates moderate breeze; 10 indicates that it blew for 10% of an average hour. Thus 2.6 kn*.1 hrs = .26 nm.</li>
+<li>Repeat for each of the other six headings, as well as the dead calm, and add these values together: 2.43 nm:</li>
+</ol>
+			
+<div class="inlinepic"><img src="figures/apply_arcenas_table01.png"/><p><span class="caption"  id="cap_b04">Table 1.</span></p></div>
+			
+<h4>B. Conclusions:</h4>
+<p>The procedure indicates that a relatively fast vessel sailing due North from Alexandria, during the month of June, would cover 2.43 nautical miles during an average hour.  In other words, for these particular conditions, f(Vwind) = V = 2.43 knots.  As the process can be mechanically repeated for all possible locations, headings, and wind conditions, it provides us with a general solution to f(Vwind).  In so doing, moreover, it returns us to the simple equation with which we began (T=D*V) and thus allows maritime travel to be modeled just as easily as its land bound counterpart .  </p>
+<p>For an explanation of the way in which ORBIS employs the model, please refer to 'Building ORBIS: Geospatial Technology.'  For a more detailed discussion of the model itself, please contact sarcenas@stanford.edu or refer to Arcenas (forthcoming).</p>
+<div class="footnotes"> <!-- style="list-style-type:decimal;	margin-left: 0;	padding-left: 1.3em; margin-left:8px;"-->
+<ol>
+<li id="sa_fn1">As noted above ('<a href="#" onclick="goRemoteTab(3,'building_tabs',1)">Building ORBIS: Geospatial Technology</a>'), data for the Black Sea were only available in a somewhat different format.<a href="#sa_cite1" title="return to article">&nbsp;↑</a></li>
+<li id="sa_fn2">For the 'faster' vessel, light airs = Beaufort 2; moderate breeze = Beaufort 3-4; and heavy air ≥ Beaufort 5.  For the 'slower' vessel, light airs = Beaufort 2-3; moderate breeze = Beaufort 4; and heavy air ≥ Beaufort 5.  See also '<a href="#" onclick="goRemoteTab(3,'building_tabs',1)">Building ORBIS: Geospatial Technology</a>.'<a href="#sa_cite2" title="return to article">&nbsp;↑</a></li>
+<li id="sa_fn3">See '<a href="#" onclick="goRemoteTab(3,'building_tabs',1)">Building ORBIS: Geospatial Technology</a>' for further discussion of these 'faster' and 'slower' vessels.<a href="#sa_cite3" title="return to article">&nbsp;↑</a></li>
+</ol>
+</div>
+</div>
