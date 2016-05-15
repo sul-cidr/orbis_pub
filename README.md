@@ -1,4 +1,6 @@
-ORBIS v2
+ORBIS v2 (orbis_pub)
+
+NOTE: ORBIS relies on a PostgreSQL database, not included in this repo
 
 This is a pure D3.js version of ORBIS ( http://orbis.stanford.edu ) that introduces several new features:
 
